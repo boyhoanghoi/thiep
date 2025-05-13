@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Sinh Nhật Cho Người Yêu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffeef8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .dancing-font {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .card {
+            transform-style: preserve-3d;
+            transition: all 0.8s ease;
+            box-shadow: 0 20px 50px rgba(255, 138, 191, 0.3);
+        }
+        
+        .card:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+        
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-100px) rotate(20deg);
+                opacity: 0.7;
+            }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+        
+        .btn-glow {
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px #ff9ec6, 0 0 10px #ff9ec6;
+            }
+            to {
+                box-shadow: 0 0 15px #ff6bae, 0 0 30px #ff6bae;
+            }
+        }
+        
+        .photo-frame {
+            border: 8px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .photo-frame:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+    <div class="relative w-full max-w-2xl">
+        <!-- Floating hearts background -->
+        <div id="hearts-container"></div>
+        
+        <!-- Main card -->
+        <div class="card bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl overflow-hidden p-8 relative z-10">
+            <div class="absolute top-0 right-0 p-4">
+                <i class="fas fa-heart text-pink-400 text-3xl animate-pulse"></i>
+            </div>
+            
+            <div class="text-center mb-8">
+                <h1 class="dancing-font text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500 mb-2">
+                    Happy Birthday!
+                </h1>
+                <p class="text-pink-600 italic">Gửi đến người con gái anh yêu nhất</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                <div class="photo-frame rounded-lg overflow-hidden w-48 h-48 md:w-56 md:h-56 bg-pink-100 flex items-center justify-center">
+                    <!-- Replace with your photo -->
+                    <div class="text-center p-4">
+                        <i class="fas fa-camera-retro text-4xl text-pink-400 mb-2"></i>
+                        <p class="text-pink-600">Ảnh của chúng ta</p>
+                    </div>
+                </div>
+                
+                <div class="flex-1">
+                    <div class="bg-white bg-opacity-70 rounded-xl p-6 shadow-sm">
+                        <h3 class="dancing-font text-3xl text-pink-600 mb-4">Gửi em yêu,</h3>
+                        <p class="text-gray-700 mb-3">Hôm nay là ngày đặc biệt nhất trong năm - ngày em chào đời!</p>
+                        <p class="text-gray-700 mb-3">Anh cảm ơn vì em đã đến bên anh, mang đến cho anh những ngày tháng ngọt ngào nhất.</p>
+                        <p class="text-gray-700">Chúc em một sinh nhật tràn ngập niềm vui, hạnh phúc và luôn xinh đẹp như bây giờ!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mb-6">
+                <div class="inline-block bg-white bg-opacity-80 rounded-full px-6 py-3 shadow-sm">
+                    <p class="dancing-font text-2xl text-pink-600">Mãi yêu em!</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-center gap-4">
+                <button onclick="playMusic()" class="btn-glow bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full flex items-center gap-2 transition-all">
+                    <i class="fas fa-music"></i> Nhạc sinh nhật
+                </button>
+                <button onclick="showConfetti()" class="bg-rose-500 hover:bg-rose-600 text-white px-6 py-2 rounded-full flex items-center gap-2 transition-all">
+                    <i class="fas fa-gift"></i> Bất ngờ nè!
+                </button>
+            </div>
+        </div>
+        
+        <!-- Hidden audio -->
+        <audio id="birthdaySong" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const colors = ['#ff6b8b', '#ff8fab', '#ffb3c6', '#ffd6e0'];
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart text-2xl';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.animationDuration = (Math.random() * 5 + 3) + 's';
+                heart.style.animationDelay = (Math.random() * 3) + 's';
+                heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(heart);
+            }
+        }
+        
+        // Confetti effect
+        function showConfetti() {
+            const container = document.getElementById('hearts-container');
+            const colors = ['#ff6b8b', '#ff8fab', '#ffb3c6', '#ffd6e0', '#ff9ec6'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -10 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.width = (Math.random() * 8 + 5) + 'px';
+                confetti.style.height = (Math.random() * 8 + 5) + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                container.appendChild(confetti);
+                
+                // Animate confetti
+                setTimeout(() => {
+                    confetti.style.opacity = '1';
+                    confetti.style.transition = `all ${Math.random() * 3 + 2}s ease-out`;
+                    confetti.style.top = '100vh';
+                    confetti.style.left = (parseFloat(confetti.style.left) + (Math.random() * 200 - 100)) + 'px';
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 20);
+            }
+        }
+        
+        // Play music
+        function playMusic() {
+            const song = document.getElementById('birthdaySong');
+            const btn = event.target;
+            
+            if (song.paused) {
+                song.play();
+                btn.innerHTML = '<i class="fas fa-pause"></i> Tạm dừng';
+            } else {
+                song.pause();
+                btn.innerHTML = '<i class="fas fa-music"></i> Nhạc sinh nhật';
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            createHearts();
+            
+            // Add click effect
+            document.addEventListener('click', function(e) {
+                const x = e.clientX;
+                const y = e.clientY;
+                
+                const heart = document.createElement('div');
+                heart.className = 'heart text-xl absolute';
+                heart.innerHTML = '❤️';
+                heart.style.left = x + 'px';
+                heart.style.top = y + 'px';
+                heart.style.animation = 'none';
+                heart.style.opacity = '1';
+                
+                document.body.appendChild(heart);
+                
+                // Animate
+                setTimeout(() => {
+                    heart.style.transition = 'all 1s ease-out';
+                    heart.style.opacity = '0';
+                    heart.style.transform = 'translateY(-50px)';
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 1000);
+                }, 10);
+            });
+        };
+    </script>
+</body>
+</html>
